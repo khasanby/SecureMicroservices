@@ -46,6 +46,11 @@ builder.Services.AddIdentityServer()
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var serviceProvider = scope.ServiceProvider;
+// Apply migrations and seed the database
+IdentityServerDbSeeder.Seed(serviceProvider);
+
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
