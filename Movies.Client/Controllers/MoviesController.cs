@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Diagnostics;
+using Movies.Client.Infrastructure;
+using Movies.Client.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Movies.Client.Controllers;
 
@@ -19,7 +24,7 @@ public class MoviesController : Controller
     public async Task<IActionResult> Index()
     {
         await LogTokenAndClaims();
-        return View(await _movieApiService.GetMovies());
+        return View(await _movieApiService.GetMoviesAsync());
     }
     public async Task LogTokenAndClaims()
     {
@@ -36,7 +41,7 @@ public class MoviesController : Controller
     [Authorize(Roles = "admin")]
     public async Task<IActionResult> OnlyAdmin()
     {
-        var userInfo = await _movieApiService.GetUserInfo();
+        var userInfo = await _movieApiService.GetUserInfoAsync();
         return View(userInfo);
     }
 

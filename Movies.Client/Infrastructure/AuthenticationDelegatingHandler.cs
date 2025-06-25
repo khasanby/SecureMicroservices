@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using IdentityModel.Client;
 
 namespace Movies.Client.Infrastructure;
 

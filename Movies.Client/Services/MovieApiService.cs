@@ -2,6 +2,8 @@
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Movies.Client.Infrastructure;
 using Movies.Client.Models;
+using Newtonsoft.Json;
+using IdentityModel.Client;
 
 namespace Movies.Client.Services;
 

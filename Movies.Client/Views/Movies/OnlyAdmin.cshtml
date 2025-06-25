@@ -1,0 +1,30 @@
+@model Movies.Client.Models.UserInfoViewModel
+
+@{
+    ViewData["Title"] = "Admin Only";
+}
+
+<h1>Admin Only Page</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>User Info</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Claim Type</th>
+                    <th>Claim Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model.UserInfoDictionary)
+                {
+                    <tr>
+                        <td>@claim.Key</td>
+                        <td>@claim.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div> 

@@ -1,33 +1,35 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Movies.Client.Infrastructure;
 using Movies.Client.Services;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IMovieApiService, MovieApiService>();
 
-//builder.Services.AddTransient<AuthenticationDelegatingHandler>();
+builder.Services.AddTransient<AuthenticationDelegatingHandler>();
 
-//builder.Services.AddHttpClient("MovieAPIClient", client =>
-//{
-//    client.BaseAddress = new Uri("https://localhost:5010/"); // API GATEWAY URL
-//    client.DefaultRequestHeaders.Clear();
-//    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-//}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
-
+builder.Services.AddHttpClient("MovieAPIClient", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5010/"); // API GATEWAY URL
+    client.DefaultRequestHeaders.Clear();
+    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+}).AddHttpMessageHandler<AuthenticationDelegatingHandler>();
 
 // Create an HttpClient used for accessing the IDP
-//builder.Services.AddHttpClient("IDPClient", client =>
-//{
-//    client.BaseAddress = new Uri("https://localhost:5005/");
-//    client.DefaultRequestHeaders.Clear();
-//    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-//});
+builder.Services.AddHttpClient("IDPClient", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5005/");
+    client.DefaultRequestHeaders.Clear();
+    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+});
 
 builder.Services.AddHttpContextAccessor();
 
@@ -42,15 +44,15 @@ builder.Services.AddAuthentication(options =>
       options.ClientId = "movies_mvc_client";
       options.ClientSecret = "secret";
       options.ResponseType = "code id_token";
-      //options.Scope.Add("openid");
-      //options.Scope.Add("profile");
+      options.Scope.Add("openid");
+      options.Scope.Add("profile");
       options.Scope.Add("address");
       options.Scope.Add("email");
       options.Scope.Add("roles");
-      options.ClaimActions.DeleteClaim("sid");
-      options.ClaimActions.DeleteClaim("idp");
-      options.ClaimActions.DeleteClaim("s_hash");
-      options.ClaimActions.DeleteClaim("auth_time");
+      options.ClaimActions.Remove("sid");
+      options.ClaimActions.Remove("idp");
+      options.ClaimActions.Remove("s_hash");
+      options.ClaimActions.Remove("auth_time");
       options.ClaimActions.MapUniqueJsonKey("role", "role");
       options.Scope.Add("movieAPI");
       options.SaveTokens = true;
@@ -76,12 +78,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
